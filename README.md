@@ -7,7 +7,7 @@ iPhone'dan (ya da herhangi bir telefondan) Windows'a, aynı Wi-Fi üzerinden fot
 ## Kurulum (bir kez)
 
 1. [Python](https://www.python.org/downloads/) kur. Kurulumda **"Add python.exe to PATH"** kutusunu işaretle.
-2. [Releases](https://github.com/emremmss/winTransfer/releases/latest) sayfasından en son `Yolla-vX.Y.Z.zip` dosyasını indir ve bir yere çıkar.
+2. [Releases](https://github.com/emremmss/Yolla/releases/latest) sayfasından en son `Yolla-vX.Y.Z.zip` dosyasını indir ve bir yere çıkar.
 3. `kurulum.bat` dosyasına çift tıkla ve yönetici iznini onayla. Bu adım güvenlik duvarında yalnızca Yolla'nın portunu, yalnızca ev ağına açar. Wi-Fi'yi "Özel" yapmana gerek yoktur.
 
 ## Kullanım
