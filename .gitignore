@@ -1,0 +1,4 @@
+# Kisisel erisim anahtari, asla paylasma
+token.txt
+__pycache__/
+*.part
