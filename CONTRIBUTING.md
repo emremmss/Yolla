@@ -42,14 +42,17 @@ Sürümler [SemVer](https://semver.org/lang/tr/) kurallarına uyar: `MAJOR.MINOR
 - **MAJOR** (0.x → 1.0.0): Uyumluluğu bozan değişiklik (ör. kestirme adres biçiminin değişmesi).
 
 Adımlar:
-1. `yolla.py` içindeki `__version__` değerini yeni sürüme güncelle.
-2. `CHANGELOG.md` içinde **[Yayınlanmamış]** altındakileri yeni bir `## [X.Y.Z] - YYYY-AA-GG` başlığına taşı.
-3. Commit'le ve etiketle:
+1. Yeni bir dal aç: `git switch -c surum/X.Y.Z`
+2. `yolla.py` içindeki `__version__` değerini yeni sürüme güncelle.
+3. `CHANGELOG.md` içinde **[Yayınlanmamış]** altındakileri yeni bir `## [X.Y.Z] - YYYY-AA-GG` başlığına taşı.
+4. Commit'le, `Surum X.Y.Z` başlıklı bir PR aç ve CI geçince squash ile birleştir. `main` korumalı olduğu için doğrudan push edilemez.
+5. Birleştirilmiş `main` üzerinde etiketle:
    ```
-   git commit -am "Surum X.Y.Z"
-   git tag vX.Y.Z
-   git push origin main vX.Y.Z
+   git switch main
+   git pull
+   git tag -a vX.Y.Z -m "Yolla X.Y.Z"
+   git push origin vX.Y.Z
    ```
-4. Etiket push edilince [Release iş akışı](.github/workflows/release.yml) şunları otomatik yapar: sürüm numarasını ve testleri kontrol eder, `Yolla-vX.Y.Z.zip` paketini hazırlar, CHANGELOG'daki notlarla GitHub Release yayınlar.
+6. Etiket push edilince [Release iş akışı](.github/workflows/release.yml) şunları otomatik yapar: sürüm numarasını ve testleri kontrol eder, `Yolla-vX.Y.Z.zip` paketini hazırlar, CHANGELOG'daki notlarla GitHub Release yayınlar.
 
 Bir release hatalı çıkarsa etiketi silip yeniden kullanma. Düzeltmeyi yeni bir PATCH sürümüyle yayınla.
