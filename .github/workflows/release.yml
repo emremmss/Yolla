@@ -1,0 +1,46 @@
+name: Release
+
+# v1.2.3 bicimindeki bir etiket push edilince calisir:
+# testleri kosar, ZIP paketi hazirlar ve CHANGELOG'daki notlarla GitHub Release olusturur.
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Etiket ile yolla.py surumu ayni mi
+        run: |
+          v=$(python3 -c "import re; print(re.search(r'__version__ = \"(.+?)\"', open('yolla.py').read()).group(1))")
+          if [ "v$v" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Etiket $GITHUB_REF_NAME ama yolla.py surumu $v"
+            exit 1
+          fi
+
+      - name: Testler
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Surum notlarini CHANGELOG'dan al
+        run: |
+          awk -v ver="${GITHUB_REF_NAME#v}" '/^## \[/ { p = index($0, "[" ver "]") > 0; next } p' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "::error::CHANGELOG.md icinde [${GITHUB_REF_NAME#v}] bolumu yok"
+            exit 1
+          fi
+
+      - name: ZIP paketi
+        run: |
+          mkdir -p dist/Yolla
+          cp yolla.py Yolla.bat kurulum.bat kurulum.ps1 requirements.txt README.md LICENSE dist/Yolla/
+          cd dist && zip -r "Yolla-$GITHUB_REF_NAME.zip" Yolla
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.zip --title "Yolla $GITHUB_REF_NAME" --notes-file notes.md

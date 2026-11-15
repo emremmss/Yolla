@@ -1,0 +1,4 @@
+* text=auto
+# Windows betikleri, GitHub ZIP'inden indirildiginde de CRLF kalmali
+*.bat text eol=crlf
+*.ps1 text eol=crlf

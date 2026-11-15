@@ -10,17 +10,21 @@ Her gonderim istegi terminalde onaylanmadan bilgisayara hicbir sey yazilmaz.
 import argparse
 import hmac
 import html
+import io
 import json
 import os
 import queue
 import re
 import secrets
 import socket
+import sys
 import threading
 import time
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, parse_qs
+
+__version__ = "0.1.0"
 
 CHUNK = 1024 * 1024
 TOKEN_FILE = Path(__file__).with_name("token.txt")
@@ -408,9 +412,12 @@ def ask(req):
 
 
 def main():
+    # Telefondan gelen dosya adlarinda emoji vb. olabilir; yazdirirken cokmesin.
+    sys.stdout.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description="Telefondan Windows'a fotograf aktarimi")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--dir", type=Path, default=pictures_dir() / "Yolla")
+    parser.add_argument("--version", action="version", version=f"Yolla {__version__}")
     args = parser.parse_args()
 
     dest = args.dir.expanduser().resolve()
@@ -424,7 +431,7 @@ def main():
     threading.Thread(target=server.serve_forever, daemon=True).start()
 
     print()
-    print("  Yolla calisiyor")
+    print(f"  Yolla {__version__} calisiyor")
     print(f"  Telefonda ac:   {url}")
     print(f"  Kayit klasoru:  {dest}")
     print()
@@ -459,7 +466,15 @@ def print_qr(url):
         return
     qr = qrcode.QRCode(border=1)
     qr.add_data(url)
-    qr.print_ascii(invert=True)
+    out = io.StringIO()
+    qr.print_ascii(out=out, invert=True)
+    try:
+        "█▀▄".encode(sys.stdout.encoding or "ascii")
+    except UnicodeEncodeError:
+        # Cikti dosyaya/boruya yonlendirilmisse blok karakterler yazilamayabilir.
+        print("  (QR kod bu ciktida gosterilemiyor, adresi elle ac.)")
+        return
+    print(out.getvalue(), end="")
 
 
 if __name__ == "__main__":
