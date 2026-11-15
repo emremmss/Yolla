@@ -60,3 +60,7 @@ Not: Bilgisayarın IP adresi değişirse kestirmedeki adresi güncellemen gereki
 ## Gereksinimler
 
 Windows 10/11, Python 3.9+. Telefon tarafında yalnızca bir tarayıcı yeter: iPhone'da Safari, Android'de Chrome.
+
+## Lisans
+
+[MIT](LICENSE): Ücretsiz olarak kullanabilir, değiştirebilir ve paylaşabilirsin.
